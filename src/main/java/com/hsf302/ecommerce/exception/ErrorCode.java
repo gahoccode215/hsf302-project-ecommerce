@@ -14,7 +14,8 @@ public enum ErrorCode {
     INVALID_TOKEN(1004, "Invalid token", HttpStatus.BAD_REQUEST),
     INVALID_LOGIN(1005, "Username or password not correct", HttpStatus.BAD_REQUEST),
     CATEGORY_NOT_FOUND(1006, "Category not found", HttpStatus.BAD_REQUEST),
-    PRODUCT_NOT_FOUND(1007, "Product not found", HttpStatus.BAD_REQUEST)
+    PRODUCT_NOT_FOUND(1007, "Product not found", HttpStatus.BAD_REQUEST),
+    USER_NOT_FOUND(1008, "User not found", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

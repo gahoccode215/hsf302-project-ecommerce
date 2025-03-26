@@ -40,7 +40,7 @@ public class Order {
     @JsonIgnore
     Address address;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     List<OrderItem> orderItems;
 

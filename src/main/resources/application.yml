@@ -29,3 +29,8 @@ jwt:
   signerKey: ${JWT_SIGNER_KEY:1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij}
   valid-duration: ${JWT_VALID_DURATION:3600} # in seconds
   refreshable-duration: ${JWT_REFRESHABLE_DURATION:36000} # in seconds
+vnpay:
+  tmnCode: ${VNPAY_TMN_CODE:M0R9Z6E1}
+  hashSecret: ${VNPAY_HASH_SECRET:6Z3AGDLVVDYXEAE3JKBNI6LN2ARZXXST}
+  url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+  returnUrl: http://localhost:8080/api/v1/swd392-skincare-products-sales-system/orders/payment-callback

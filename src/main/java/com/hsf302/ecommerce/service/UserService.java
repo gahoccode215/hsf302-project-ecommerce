@@ -42,6 +42,8 @@ class UserServiceImpl implements UserService {
             user.setFirstName(request.getFirstName());
         if (request.getLastName() != null)
             user.setLastName(request.getLastName());
+        if(request.getAvatar() != null)
+            user.setAvatar(request.getAvatar());
         userRepository.save(user);
     }
 
@@ -50,6 +52,7 @@ class UserServiceImpl implements UserService {
                 .id(user.getId())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
+                .avatar(user.getAvatar())
                 .build();
     }
 

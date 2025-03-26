@@ -8,9 +8,12 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserResponse {
+public class OrderItemResponse {
     Long id;
-    String firstName;
-    String lastName;
-    String avatar;
+    Long productId;
+    String productName;
+    Integer quantity;
+    Double price;
+    Double totalPrice;
+    String thumbnailProduct;
 }

@@ -11,4 +11,5 @@ import lombok.experimental.FieldDefaults;
 public class UserUpdateProfileRequest {
     String firstName;
     String lastName;
+    String avatar;
 }

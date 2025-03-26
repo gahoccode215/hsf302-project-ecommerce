@@ -1,6 +1,8 @@
 package com.hsf302.ecommerce.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hsf302.ecommerce.enums.PaymentMethod;
+import com.hsf302.ecommerce.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -39,6 +41,13 @@ public class Order {
     @JoinColumn(name = "address_id")
     @JsonIgnore
     Address address;
+
+    @Enumerated(EnumType.STRING)
+    PaymentStatus paymentStatus;
+
+    @Enumerated(EnumType.STRING)
+    PaymentMethod paymentMethod;
+
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore

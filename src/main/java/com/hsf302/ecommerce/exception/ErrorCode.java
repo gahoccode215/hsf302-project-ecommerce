@@ -17,6 +17,10 @@ public enum ErrorCode {
     PRODUCT_NOT_FOUND(1007, "Product not found", HttpStatus.BAD_REQUEST),
     USER_NOT_FOUND(1008, "User not found", HttpStatus.BAD_REQUEST),
     ADDRESS_NOT_FOUND(1009, "Address not found", HttpStatus.BAD_REQUEST),
+    INVALID_QUANTITY(1010, "Invalid quantity", HttpStatus.BAD_REQUEST),
+    ORDER_NOT_FOUND(1011, "Order not found", HttpStatus.BAD_REQUEST),
+    CART_NOT_FOUND(1012, "Cart not found", HttpStatus.BAD_REQUEST),
+    INVALID_PAYMENT_METHOD(1013, "Invalid payment method", HttpStatus.BAD_REQUEST)
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

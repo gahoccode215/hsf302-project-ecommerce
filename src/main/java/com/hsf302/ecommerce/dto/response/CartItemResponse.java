@@ -8,9 +8,11 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserResponse {
-    Long id;
-    String firstName;
-    String lastName;
-    String avatar;
+public class CartItemResponse {
+    Long productId;
+    String productName;
+    String thumbnail;
+    Double price;
+    int quantity;
+    Double totalItemPrice;
 }

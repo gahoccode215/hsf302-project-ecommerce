@@ -50,7 +50,7 @@ class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public void register(RegisterRequest request) {
         if(userRepository.existsByUsername(request.getUsername())){
-            throw new AppException(ErrorCode.USERNAME_EXSITED);
+            throw new AppException(ErrorCode.USERNAME_EXISTED);
         }
         Set<Role> roles = new HashSet<>();
         roles.add(roleRepository.findByName(PredefinedRole.ROLE_CUSTOMER).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND)));

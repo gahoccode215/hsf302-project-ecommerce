@@ -25,32 +25,34 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Đăng ký tài khoản khách hàng", description = "API Đăng ký tài khoản khách hàng")
+    @Operation(summary = "Register customer account", description = "API to register a customer account")
     public ApiResponse<Void> register(@RequestBody @Valid RegisterRequest request){
         authenticationService.register(request);
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.CREATED.value())
-                .message("Đăng ký thành công")
+                .message("Registration successful")
                 .build();
     }
+
     @PostMapping("/login")
-    @Operation(summary = "Đăng nhập", description = "API đăng nhập")
+    @Operation(summary = "Login", description = "API to login")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<LoginResponse> login(@RequestBody @Valid LoginRequest request){
         return ApiResponse.<LoginResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Đăng nhập thành công")
+                .message("Login successful")
                 .result(authenticationService.login(request))
                 .build();
     }
+
     @PostMapping("/logout")
-    @Operation(summary = "Đăng xuất", description = "Invalidate JWT token to logout user")
+    @Operation(summary = "Logout", description = "Invalidate JWT token to logout user")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<String> logout(@RequestBody LogoutRequest request) {
         authenticationService.logout(request);
         return ApiResponse.<String>builder()
                 .code(HttpStatus.OK.value())
-                .message("Đăng xuất thành công")
+                .message("Logout successful")
                 .build();
     }
 }

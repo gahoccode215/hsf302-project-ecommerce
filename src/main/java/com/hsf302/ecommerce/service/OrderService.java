@@ -75,10 +75,11 @@ class OrderServiceImpl implements OrderService{
         User user = getAuthenticatedUser();
         if (page > 0) page -= 1;
         Pageable pageable = PageRequest.of(page, size);
-        Page<Order> orders = orderRepository.findAllByUsername(user.getUsername(), pageable);
+        Page<Order> orders = orderRepository.findByUserUsername(user.getUsername(), pageable);
         List<OrderResponse> orderResponses = orders.getContent().stream()
                 .map(this::mapToOrderResponse)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList())
+                .reversed();
         OrderPageResponse response = new OrderPageResponse();
         response.setOrderResponseList(orderResponses);
         response.setTotalElements(orders.getTotalElements());

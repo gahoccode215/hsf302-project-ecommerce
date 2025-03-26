@@ -8,8 +8,5 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    @Query("SELECT x FROM Order x JOIN User u WHERE u.username = :username")
-    Page<Order> findAllByUsername(
-            @Param("username") String username,
-            Pageable pageable);
+    Page<Order> findByUserUsername(String username, Pageable pageable);
 }

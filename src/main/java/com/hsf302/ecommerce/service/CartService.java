@@ -46,9 +46,11 @@ class CartServiceImpl implements CartService{
 
     @Override
     public void addProductToCart(Long productId, Integer quantity) {
+        log.info("VO DAY");
         User user = getAuthenticatedUser();
         Product product = getProductById(productId);
         Cart cart = getOrCreateCartEntity(user);
+        log.info("{}", cart);
         Optional<CartItem> existingItem = cart.getItems().stream()
                 .filter(item -> item.getProduct().getId().equals(productId))
                 .findFirst();

@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 import java.util.List;
 
 @Entity
-@Table(name = "tbl_order_item")
+@Table(name = "order_item")
 @Getter
 @Setter
 @NoArgsConstructor

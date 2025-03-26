@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "tbl_feedback")
+@Table(name = "feedback")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Feedback {
     @Id

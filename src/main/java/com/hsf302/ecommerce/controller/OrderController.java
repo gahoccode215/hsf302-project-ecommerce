@@ -60,8 +60,10 @@ public class OrderController {
         }
     }
 
-    @GetMapping("/payment-callback")
-    public ApiResponse<String> handlePaymentCallback(@RequestParam Map<String, String> params) throws UnsupportedEncodingException {
+    @PostMapping("/payment-success")
+    public ApiResponse<String> handlePaymentCallback(@RequestParam Map<String, String> params) {
+        log.info("PAYMENT DAY");
+        log.info("{}", params);
 //        boolean isValid = vnPayService.validateCallback(params);
 //        if (!isValid) {
 //            return ApiResponse.<String>builder()
@@ -70,9 +72,9 @@ public class OrderController {
 //                    .build();
 //        }
 
-        String orderId = params.get("orderId");
+        String orderId = params.get("vnp_TxnRef");
         String responseCode = params.get("vnp_ResponseCode");
-        boolean isPaid = "00" .equals(responseCode);
+        boolean isPaid = "00".equals(responseCode);
 
         orderService.updateOrderStatus(Long.parseLong(orderId), isPaid);
 

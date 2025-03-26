@@ -15,6 +15,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public interface ProductService {
     void createProduct(ProductCreationRequest request);
@@ -41,25 +44,31 @@ class ProductServiceImpl implements ProductService{
     CategoryRepository categoryRepository;
 
     @Override
+    @CacheEvict(value = "productPages", allEntries = true)
     public void createProduct(ProductCreationRequest request) {
         Category category = categoryRepository.findById(request.getCategoryId()).orElse(null);
+        log.info("{}", category);
         Product product = Product.builder()
                 .name(request.getName())
                 .description(request.getDescription())
                 .thumbnail(request.getThumbnail())
                 .price(request.getPrice())
                 .quantity(request.getQuantity())
-                .category(category)
                 .build();
+        if(category != null){
+            product.setCategory(category);
+        }
         productRepository.save(product);
     }
 
     @Override
+    @CacheEvict(value = "products", key = "#id")
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }
 
     @Override
+    @CacheEvict(value = "products", key = "#id")
     public void updateProduct(ProductUpdateRequest request, Long id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         if(request.getName() != null)
@@ -78,23 +87,25 @@ class ProductServiceImpl implements ProductService{
     }
 
     @Override
+    @Cacheable(value = "products", key = "#id")
     public ProductResponse getProductById(Long id) {
-        return mapToProductResponse(productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND)));
+        log.info("Fetching product from DB with id: {}", id);
+        return mapToProductResponse(productRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND)));
     }
 
     @Override
+    @Cacheable(value = "productPages", key = "#page + '-' + #size")
     public ProductPageResponse getProducts(int page, int size) {
+        log.info("Fetching getProducts in DB");
         if (page > 0) page -= 1;
-        Pageable pageable;
-        pageable = PageRequest.of(page, size);
-        Page<Product> products;
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Product> products = productRepository.findAll(pageable);
+
         ProductPageResponse response = new ProductPageResponse();
-        List<ProductResponse> productResponses = new ArrayList<>();
-        products = productRepository.findAll(pageable);
-        for (Product product : products.getContent()) {
-            ProductResponse productResponse = mapToProductResponse(product);
-            productResponses.add(productResponse);
-        }
+        List<ProductResponse> productResponses = products.getContent().stream()
+                .map(this::mapToProductResponse)
+                .collect(Collectors.toList());
         response.setContent(productResponses);
         response.setTotalElements(products.getTotalElements());
         response.setTotalPages(products.getTotalPages());

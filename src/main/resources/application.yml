@@ -24,7 +24,7 @@ open:
     description: API Service
     serverUrl: http://localhost:8080/hsf302-ecommerce
     serverName: Server
-    license: https://github.com/gahoccode215/SWP391_Skincare_Products_Sales_System
+    license: https://github.com/gahoccode215/Spring2025SWD392_NET1708_3
 jwt:
   signerKey: ${JWT_SIGNER_KEY:1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij}
   valid-duration: ${JWT_VALID_DURATION:3600} # in seconds

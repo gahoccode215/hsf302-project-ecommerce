@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:mysql://${AZURE_DB_HOST:azure-mysql-fpt.mysql.database.azure.com}:3306/${AZURE_DB_NAME:swd392-skincare-products-sales-system}?useSSL=true&requireSSL=false&serverTimezone=UTC
+    username: ${AZURE_DB_USERNAME:crosoficelldan}
+    password: ${AZURE_DB_PASSWORD:Sokaboy215}
+  jpa:
+    hibernate:
+      ddl-auto: update
+open:
+  api:
+    title: API document
+    version: v1.0.0
+    description: API Service
+    serverUrl: ${SWAGGER_SERVER_URL:http://localhost:8080/hsf302-ecommerce}
+    serverName: Server
+    license: https://github.com/gahoccode215/Spring2025SWD392_NET1708_3

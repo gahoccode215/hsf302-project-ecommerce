@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  api-service:
+    env_file:
+      - .env.prod  # Load config từ file môi trường Production
+    container_name: hsf302-project-ecommerce
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://${AZURE_DB_HOST}:${AZURE_DB_PORT}/${AZURE_DB_NAME}?useSSL=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=${AZURE_DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${AZURE_DB_PASSWORD}
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+    restart: always

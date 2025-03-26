@@ -93,6 +93,12 @@
 			<version>${projectlombok-lombok.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		<!-- .ENV-->
+		<dependency>
+			<groupId>io.github.cdimascio</groupId>
+			<artifactId>dotenv-java</artifactId>
+			<version>3.0.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

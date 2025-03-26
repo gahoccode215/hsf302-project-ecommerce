@@ -1,0 +1,31 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /hsf302-ecommerce
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/hsf302-ecommerce
+    username: root
+    password: 12345
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
+open:
+  api:
+    title: API document
+    version: v1.0.0
+    description: API Service
+    serverUrl: http://localhost:8080/hsf302-ecommerce
+    serverName: Server
+    license: https://github.com/gahoccode215/SWP391_Skincare_Products_Sales_System
+jwt:
+  signerKey: ${JWT_SIGNER_KEY:1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij}
+  valid-duration: ${JWT_VALID_DURATION:3600} # in seconds
+  refreshable-duration: ${JWT_REFRESHABLE_DURATION:36000} # in seconds

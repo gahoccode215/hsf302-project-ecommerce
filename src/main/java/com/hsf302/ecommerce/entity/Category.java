@@ -20,8 +20,9 @@ public class Category {
 
     private String name;
     private String thumbnail;
+    private Boolean isDeleted;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "category", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "category", fetch = FetchType.EAGER, orphanRemoval = true)
     @JsonIgnore
     List<Product> products;
 }

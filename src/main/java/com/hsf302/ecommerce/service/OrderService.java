@@ -13,6 +13,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -46,6 +48,8 @@ class OrderServiceImpl implements OrderService{
     ProductRepository productRepository;
 
     @Override
+    @Transactional
+    @CacheEvict(value = {"products", "productPages"}, allEntries = true)
     public OrderResponse createOrder(Long cartId, Long addressId, PaymentMethod paymentMethod) {
         User user = getAuthenticatedUser();
         Cart cart = cartRepository.findById(cartId)
@@ -59,14 +63,14 @@ class OrderServiceImpl implements OrderService{
         order = orderRepository.save(order);
         List<OrderItem> orderItems = createOrderItemsFromCart(cart, order);
         orderItems.forEach(orderItem -> {
-            productRepository.findById(orderItem.getProduct().getId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+           Product product = productRepository.findById(orderItem.getProduct().getId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+           product.setQuantity(product.getQuantity() - orderItem.getQuantity());
+           productRepository.save(product);
         });
         orderItemRepository.saveAll(orderItems);
         order.setOrderItems(orderItems);
         orderRepository.save(order);
-        if (order.getPaymentMethod() == PaymentMethod.COD) {
-            clearCart(cart);
-        }
+        clearCart(cart);
         return mapToOrderResponse(order);
     }
 

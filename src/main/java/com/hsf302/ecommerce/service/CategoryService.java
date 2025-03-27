@@ -41,18 +41,21 @@ class CategoryServiceImpl implements CategoryService{
         Category category = Category.builder()
                 .name(request.getName())
                 .thumbnail(request.getThumbnail())
+                .isDeleted(false)
                 .build();
         categoryRepository.save(category);
     }
 
     @Override
     public void deleteCategory(Long id) {
-        categoryRepository.deleteById(id);
+        Category category = categoryRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+        category.setIsDeleted(true);
+        categoryRepository.save(category);
     }
 
     @Override
     public void updateCategory(CategoryUpdateRequest request, Long id) {
-        Category category = categoryRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+        Category category = categoryRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
         if(request.getName() != null)
             category.setName(request.getName());
         if(request.getThumbnail() != null)
@@ -62,7 +65,7 @@ class CategoryServiceImpl implements CategoryService{
 
     @Override
     public CategoryResponse getCategoryById(Long id) {
-        return maptoCategoryResponse(categoryRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND)));
+        return maptoCategoryResponse(categoryRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND)));
     }
 
     @Override
@@ -73,7 +76,7 @@ class CategoryServiceImpl implements CategoryService{
         Page<Category> categories ;
         CategoryPageResponse response = new CategoryPageResponse();
         List<CategoryResponse> categoryResponses = new ArrayList<>();
-        categories = categoryRepository.findAll(pageable);
+        categories = categoryRepository.findAllByIsDeletedFalse(pageable);
         for (Category category : categories.getContent()) {
             CategoryResponse categoryResponse = maptoCategoryResponse(category);
             categoryResponses.add(categoryResponse);

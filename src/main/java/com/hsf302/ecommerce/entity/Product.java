@@ -23,8 +23,9 @@ public class Product {
     private Double price;
     private Long quantity;
     private String thumbnail;
+    private Boolean isDeleted;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JsonIgnore
     @JoinColumn(name = "category_id")
     Category category;

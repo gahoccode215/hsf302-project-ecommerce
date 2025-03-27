@@ -2,7 +2,6 @@ package com.hsf302.ecommerce.service;
 
 import com.hsf302.ecommerce.dto.request.ProductCreationRequest;
 import com.hsf302.ecommerce.dto.request.ProductUpdateRequest;
-import com.hsf302.ecommerce.dto.response.CategoryResponse;
 import com.hsf302.ecommerce.dto.response.ProductPageResponse;
 import com.hsf302.ecommerce.dto.response.ProductResponse;
 import com.hsf302.ecommerce.entity.Category;
@@ -23,7 +22,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +36,6 @@ public interface ProductService {
 @RequiredArgsConstructor
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@Transactional
 class ProductServiceImpl implements ProductService{
     ProductRepository productRepository;
     CategoryRepository categoryRepository;
@@ -46,31 +43,35 @@ class ProductServiceImpl implements ProductService{
     @Override
     @CacheEvict(value = "productPages", allEntries = true)
     public void createProduct(ProductCreationRequest request) {
-        Category category = categoryRepository.findById(request.getCategoryId()).orElse(null);
-        log.info("{}", category);
         Product product = Product.builder()
                 .name(request.getName())
                 .description(request.getDescription())
                 .thumbnail(request.getThumbnail())
                 .price(request.getPrice())
+                .isDeleted(false)
                 .quantity(request.getQuantity())
                 .build();
-        if(category != null){
+        if(request.getCategoryId() != null){
+            Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
             product.setCategory(category);
         }
         productRepository.save(product);
     }
 
     @Override
-    @CacheEvict(value = "products", key = "#id")
+    @CacheEvict(value = {"products", "productPages"}, allEntries = true)
+    @Transactional
     public void deleteProduct(Long id) {
-        productRepository.deleteById(id);
+        Product product = productRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        product.setIsDeleted(true);
+        productRepository.save(product);
     }
 
     @Override
-    @CacheEvict(value = "products", key = "#id")
+    @CacheEvict(value = {"products", "productPages"}, allEntries = true)
+    @Transactional
     public void updateProduct(ProductUpdateRequest request, Long id) {
-        Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        Product product = productRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         if(request.getName() != null)
             product.setName(request.getName());
         if(request.getDescription() != null)
@@ -87,10 +88,10 @@ class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    @Cacheable(value = "products", key = "#id")
+    @Cacheable(value = "products")
     public ProductResponse getProductById(Long id) {
         log.info("Fetching product from DB with id: {}", id);
-        return mapToProductResponse(productRepository.findById(id)
+        return mapToProductResponse(productRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND)));
     }
 
@@ -100,7 +101,7 @@ class ProductServiceImpl implements ProductService{
         log.info("Fetching getProducts in DB");
         if (page > 0) page -= 1;
         Pageable pageable = PageRequest.of(page, size);
-        Page<Product> products = productRepository.findAll(pageable);
+        Page<Product> products = productRepository.findAllByIsDeletedFalse(pageable);
 
         ProductPageResponse response = new ProductPageResponse();
         List<ProductResponse> productResponses = products.getContent().stream()
@@ -114,14 +115,17 @@ class ProductServiceImpl implements ProductService{
         return response;
     }
     private ProductResponse mapToProductResponse(Product product){
-        return ProductResponse.builder()
+        ProductResponse productResponse = ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())
                 .price(product.getPrice())
                 .quantity(product.getQuantity())
-                .categoryName(product.getCategory().getName())
                 .thumbnail(product.getThumbnail())
                 .build();
+        if(product.getCategory() != null){
+            productResponse.setCategoryName(product.getCategory().getName());
+        }
+        return productResponse;
     }
 }
